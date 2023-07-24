@@ -1,0 +1,14 @@
+library(BiocManager)
+BiocManager::install("clusterProfiler")
+BiocManager::install("org.Hs.eg.db")
+library(clusterProfiler)
+library(org.Hs.eg.db)
+
+ensmbleID <- read.csv("clipboard",header = TRUE)
+b <- as.data.frame(unlist(strsplit(as.character(ensmbleID$Geneid),split = ".",fixed = TRUE)))
+b1 <- as.data.frame(b[seq(1,nrow(b),2),])
+transID <- bitr(b1$`b[seq(1, nrow(b), 2), ]`,
+                fromType = "ENSEMBL",
+                toType = "SYMBOL",
+                OrgDb = "org.Hs.eg.db")
+write.csv(transID,file = "ENSEMBL2SYMBOL.csv")
