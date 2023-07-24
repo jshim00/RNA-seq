@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Commands that should be executed only once
+sinteractive --mem=64g --cpus-per-task=24 --time=35:59:00
+module load fastqc
+module load STAR
+module load subread
+rnaseq="/data/shimj2/rnaseq/testing"
+genomegtf="/data/shimj2/referencegenome/genes.gtf"
+genomeDir="/data/shimj2/referencegenome/"
+
+# Iterate over each sample in the directory
+for sample in $(ls $rnaseq)
+do
+    if [ -d "$sample" ]; then
+        # Perform operations on the sample
+        echo "Processing sample: $sample"
+        cd "$sample"
+
+        # fastQC
+        fastqc -o . *
+
+        # STAR
+        STAR --genomeDir $genomeDir --readFilesIn *fq1 *fq2 --runThreadN 6 --sjdbOverhang 75 --sjdbGTFfile $genomegtf --outFileNamePrefix ./ --quantMode GeneCounts --readFilesCommand cat --outSAMtype BAM SortedByCoordinate
+
+        # Counts
+        featureCounts -a $genomegtf -o counts.txt -p Aligned.sortedByCoord.out.bam
+        tail -n +2 counts.txt > counts_no_header.txt
+        cut -f 1,7 counts_no_header.txt > counts.txt
+
+        echo "Operations completed for sample: $sample"
+        cd ..
+        echo
+    fi
+done
