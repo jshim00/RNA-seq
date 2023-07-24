@@ -1,0 +1,49 @@
+import csv
+
+def is_valid_number(value):
+    try:
+        float(value)
+        return True
+    except ValueError:
+        return False
+      
+def remove_rows(path):
+    # Create a temporary list to store the rows that meet the condition
+    rows_to_keep = []
+
+    # Open the CSV file and read its contents
+    with open(path, 'r', encoding='latin-1', errors='ignore') as csvfile:
+        reader = csv.reader(csvfile)
+        header = next(reader)  # Skip the header row
+        
+        for row in reader:
+            try:
+                # Check if all values in the row are valid numbers
+                # Skips the firsts three columns! 
+                if all(is_valid_number(value) for value in row[3:]):
+                    # Convert row values to floats
+                    row_values = [float(value) for value in row[3:]]
+
+                    # Calculate the average of the row values
+                    row_average = sum(row_values) / len(row_values)
+
+                    # Check if the average is greater than 15
+                    if row_average > 15:
+                        rows_to_keep.append(row)
+            except csv.Error:
+                # Handle CSV errors (e.g., NUL characters in a row)
+                print("Skipping invalid row:", row)
+
+    # Write the filtered rows to a new CSV file
+    with open('filtered.csv', 'w', newline='', encoding = 'utf-8') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(header)  # Write the header row
+        writer.writerows(rows_to_keep)
+
+    print("Filtered CSV created successfully.")
+
+# Example usage:
+csv_path = r'C:\Users\shimj2\Downloads\summer project\countcsv.csv'
+
+remove_rows(csv_path)
+
