@@ -1,3 +1,5 @@
+# converts ensemble geneID to gene symbol
+
 library(BiocManager)
 BiocManager::install("clusterProfiler")
 BiocManager::install("org.Hs.eg.db")
