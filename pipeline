@@ -1,3 +1,5 @@
+# bash script that processes RNA-seq data using fastQC, STAR, and subRead tools from Biowulf.
+
 #!/bin/bash
 
 # Commands that should be executed only once
