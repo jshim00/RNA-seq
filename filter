@@ -1,3 +1,6 @@
+# this python script removes rows with low quality reads given a csv file containing referenced data
+# rows that averaged less than 15 reads were considered low quality 
+
 import csv
 
 def is_valid_number(value):
